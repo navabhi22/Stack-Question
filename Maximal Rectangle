@@ -1,0 +1,109 @@
+85. Maximal Rectangle
+Hard
+8.4K
+134
+Companies
+
+Given a rows x cols binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+ 
+
+Example 1:
+
+Input: matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+Output: 6
+Explanation: The maximal rectangle is shown in the above picture.
+
+Example 2:
+
+Input: matrix = [["0"]]
+Output: 0
+
+Example 3:
+
+Input: matrix = [["1"]]
+Output: 1
+
+ 
+
+Constraints:
+
+    rows == matrix.length
+    cols == matrix[i].length
+    1 <= row, cols <= 200
+    matrix[i][j] is '0' or '1'.
+
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        int R=matrix.length;
+        int C=matrix[0].length;
+        int max=0;
+        int[][] mat = new int[R][C];
+        for(int r=0;r<R;r++){
+            for(int c=0;c<C;c++){
+                if(r==0){
+                    mat[r][c]=(int)(matrix[r][c]-'0');
+                    
+                }else{
+                    if(matrix[r][c]=='0'){
+                        mat[r][c]=(int)(matrix[r][c]-'0');
+                    }else{
+                        mat[r][c]=(int)(matrix[r][c]-'0');
+                        mat[r][c]=mat[r-1][c]+mat[r][c];
+                    }
+                }
+            }
+            max=Math.max(max,largestRectangleArea(mat[r]));
+        }
+        return max;
+    }
+    public int largestRectangleArea(int[] heights) {
+        int n=heights.length;
+        Stack<Integer> s1 =  new Stack<Integer>();
+        int[] l = new int[n];
+        Stack<Integer> s2 =  new Stack<Integer>();
+        int[] r = new int[n];
+        for(int i=0;i<n;i++){
+            
+            if(s1.isEmpty()){
+                l[i]=0;
+                s1.push(0);
+            }else{
+                while(!s1.isEmpty() && heights[s1.peek()]>=heights[i]){
+                    s1.pop();
+                }
+                if(s1.isEmpty()){
+                    l[i]=0;
+                }else{
+                    l[i]=s1.peek()+1;
+                }
+                s1.push(i);
+            }
+            
+        }
+        for(int i=n-1;i>=0;i--){
+            
+            if(s2.isEmpty()){
+                r[i]=n-1;
+                s2.push(i);
+            }else{
+                while(!s2.isEmpty() && heights[s2.peek()]>=heights[i]){
+                    s2.pop();
+                }
+                if(s2.isEmpty()){
+                    r[i]=n-1;
+                }else{
+                    r[i]=s2.peek()-1;
+                }
+                s2.push(i);
+            }
+            
+        }
+        int max=0;
+        for(int i=0;i<n;i++){
+            int area=heights[i]*(r[i]-l[i]+1);
+            max=Math.max(max,area);
+        }
+        return max;
+    }
+}
